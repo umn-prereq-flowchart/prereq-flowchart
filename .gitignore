@@ -1,0 +1,16 @@
+# Crap your OS puts in directories
+.DS_Store
+Thumbs.db
+
+# Python compilation artifacts
+*.pyc
+__pycache__/
+
+# IntelliJ IDEA/PyCharm IDE files
+.idea/*
+*.iml
+
+# PyCharm might also make these sometimes
+build/
+out/
+
