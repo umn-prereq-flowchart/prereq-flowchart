@@ -5,6 +5,7 @@ Thumbs.db
 # Python compilation artifacts
 *.pyc
 __pycache__/
+.mypy_cache/
 
 # IntelliJ IDEA/PyCharm IDE files
 .idea/*
