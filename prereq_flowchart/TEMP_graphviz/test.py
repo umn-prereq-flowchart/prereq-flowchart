@@ -1,4 +1,5 @@
 import graphviz
+import os
 
 
 def simple_graph() -> graphviz.Digraph:
@@ -9,4 +10,4 @@ def simple_graph() -> graphviz.Digraph:
 
 if __name__ == "__main__":
     print("Test Successful")
-    simple_graph().render("Graph1")
+    simple_graph().render(os.path.join(os.path.dirname(__file__), "Graph1"))

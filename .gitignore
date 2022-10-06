@@ -2,6 +2,9 @@
 .DS_Store
 Thumbs.db
 
+# Generated files from GraphViz
+TEMP_graphviz/*
+
 # Python compilation artifacts
 *.pyc
 __pycache__/
@@ -14,4 +17,3 @@ __pycache__/
 # PyCharm might also make these sometimes
 build/
 out/
-
