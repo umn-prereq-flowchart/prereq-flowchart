@@ -3,6 +3,9 @@ from dataclasses import dataclass
 from typing import Any, TypeAlias, Tuple
 import re
 from enum import IntEnum
+from prereq_flowchart.depts import ALL_DEPTS
+import pickle
+import pprint
 
 CLASSINFO_URL: str = "http://classinfo.umn.edu/?subject={department}&json=1"
 
@@ -50,13 +53,7 @@ class Prerequisite:
     concurrent_allowed: bool = False
 
 
-Credits: TypeAlias = (
-    None
-    | float
-    | Tuple[
-        float, float
-    ]
-)
+Credits: TypeAlias = None | float | Tuple[float, float]
 
 
 @dataclass
@@ -73,8 +70,10 @@ class Course:
 def deduplicate_class_listings(
     class_listings: dict[str, dict[Any, Any]]
 ) -> list[dict[Any, Any]]:
+    """Given courses from several terms, keep only the course from the latest term"""
     course_number_entry_keys: dict[CourseNumber, str] = {}
     last_seen_course_term: dict[CourseNumber, Term] = {}
+    # key is catalog number
     for key, course in class_listings.items():
         course_num = CourseNumber(
             department=course["Subject"], number=course["Catalog Number"]
@@ -94,6 +93,8 @@ def deduplicate_class_listings(
 
 
 def get_prerequisites_string(class_json: dict[Any, Any]) -> str:
+    """Get a prerequisite string out of a classinfo course desc"""
+
     def find_rough_string(class_json: dict[Any, Any]) -> str:
         if "Prerequisites" in class_json:
             return str(class_json["Prerequisites"])
@@ -119,7 +120,7 @@ def get_prerequisites_string(class_json: dict[Any, Any]) -> str:
         prereq_string = prereq_string.lower()
 
         prereq_string = prereq_string.replace("dept", "department")
-        prereq_string = prereq_string.replace("instr", "instructor")
+        prereq_string = prereq_string.replace("instr ", "instructor ")
 
         # its meaningless that you can get perms from special ppl
         prereq_string = prereq_string.replace("instructor consent", "")
@@ -140,6 +141,7 @@ def get_prerequisites_string(class_json: dict[Any, Any]) -> str:
 
 
 def extract_prereqs(prereq_string: str, default_subject: str) -> list[Prerequisite]:
+    """Turn a prerequisite string into a [Prerequisite] object"""
     course_number_prereqs = re.findall(
         "(?:\w{1,4} )?\d\d\d\d(?:[HWVhwv]?)", prereq_string
     )
@@ -168,6 +170,7 @@ def extract_prereqs(prereq_string: str, default_subject: str) -> list[Prerequisi
 
 
 def class_json_value_to_course(class_json: dict[Any, Any]) -> Course:
+    """Turn a class json object into a [Course] object, complete with [Prereqs]"""
     credits_str = class_json.get("Credits")
     if credits_str is not None:
         re_output = re.match(r"(\d+(?:\.\d+)?(?:-\d+)?) Credits?", credits_str)
@@ -198,8 +201,11 @@ def class_json_value_to_course(class_json: dict[Any, Any]) -> Course:
     )
 
 
-def search_dept_on_classinfo(department: str) -> dict[CourseNumber, Course]:
+def get_all_classes_from_classinfo() -> dict[CourseNumber, Course]:
+    """Get all classes from classinfo in our custom data format"""
+
     def get_single_department(department: str) -> dict[CourseNumber, Course]:
+        """Search up a single dept on class info"""
         print(f"Fetching the {department} courses")
         response = requests.get(
             f"http://classinfo.umn.edu/?subject={department}&json=1"
@@ -209,24 +215,18 @@ def search_dept_on_classinfo(department: str) -> dict[CourseNumber, Course]:
         courses = [class_json_value_to_course(course) for course in deduped_classes]
         return {course.catalog_number: course for course in courses}
 
-    def get_missing_departments(courses: dict[CourseNumber, Course]) -> set[str]:
-        fetched_depts = set()
-        for course_num in courses:
-            fetched_depts.add(course_num.department)
-
-        ret = set()
-        for course in courses.values():
-            for prereq in course.prerequisites:
-                if prereq.catalog_number.department not in fetched_depts:
-                    ret.add(prereq.catalog_number.department)
-        return ret
-
-    ret = get_single_department(department)
-    # while len(missing_depts := get_missing_departments(ret)) > 0:
-    #     for dept in missing_depts:
-    #         ret |= get_single_department(dept)
+    ret: dict[CourseNumber, Course] = dict()
+    for dept in ALL_DEPTS:
+        ret |= get_single_department(dept)
 
     return ret
 
 
-# Need a mechanism to extract requirements from university catalogs page
+if __name__ == "__main__":
+    print("testing getting classes from classinfo")
+    out = get_all_classes_from_classinfo()
+    with open("out_classinfo.pickle", "w") as f:
+        pickle.dump(out, f)
+
+    with open("out_classinfo.txt", "w") as f:
+        pprint.pprint(out, f)
