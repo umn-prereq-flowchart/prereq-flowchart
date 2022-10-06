@@ -13,6 +13,7 @@ Then, install dependencies:
 ```console
 $ pipenv install
 ```
+**You will also have to install [GraphViz](https://graphviz.org/download/)**
 
 Once you have installed dependencies, use
 
@@ -22,10 +23,10 @@ $ pipenv shell
 
 in order to activate the [virtual environment](https://docs.python.org/3/library/venv.html).
 
-| Action                  |  Command  |
-|-------------------------|-----------|
-|  Run `__main__`         | `python -m prereq_flowchart`  |
-|  Run a particular file  | `python -m prereq_flowchart.<filename>`  |
-|  Run all unit tests     | `python -m unittest discover -v -s tests/ -p "*test*.py"`  |
-|  Format code            | `black .` |
-|  Check types            | `mypy prereq_flowchart/` |
+| Action                | Command                                                   |
+| --------------------- | --------------------------------------------------------- |
+| Run `__main__`        | `python -m prereq_flowchart`                              |
+| Run a particular file | `python -m prereq_flowchart.<filename>`                   |
+| Run all unit tests    | `python -m unittest discover -v -s tests/ -p "*test*.py"` |
+| Format code           | `black .`                                                 |
+| Check types           | `mypy prereq_flowchart/`                                  |
