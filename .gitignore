@@ -3,7 +3,7 @@
 Thumbs.db
 
 # Generated files from GraphViz
-TEMP_graphviz/*
+prereq_flowchart/TEMP_graphviz/*
 
 # Python compilation artifacts
 *.pyc
