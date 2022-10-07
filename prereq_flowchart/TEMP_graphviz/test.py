@@ -1,5 +1,10 @@
 import graphviz
-import os
+from os.path import join, dirname, exists
+from os import mkdir
+
+IMAGEDIR = join(
+    dirname(dirname(dirname(__file__))), "out"
+)  # /../../../out aka prereq-flowchart/out/
 
 
 def simple_graph() -> graphviz.Digraph:
@@ -10,4 +15,6 @@ def simple_graph() -> graphviz.Digraph:
 
 if __name__ == "__main__":
     print("Test Successful")
-    simple_graph().render(os.path.join(os.path.dirname(__file__), "Graph1"))
+    if not exists(IMAGEDIR):
+        mkdir(IMAGEDIR)
+    simple_graph().render(join(IMAGEDIR, "Graph1"))
