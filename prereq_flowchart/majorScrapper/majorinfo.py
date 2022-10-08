@@ -30,10 +30,4 @@ def getMajorLinks():
 
 
 
-def getMajorInfo():
-    credElem=browser.find_element(By.CLASS_NAME,'catalogList')
-    classElems=browser.find_elements(By.CLASS_NAME,"catText")
-    for i in range(len(classElems)):
-        #Plan is to filter and put into json, for now print
-        print(classElems[i].get_attribute("textContent").strip())
 
