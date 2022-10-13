@@ -6,6 +6,7 @@ from enum import IntEnum
 from prereq_flowchart.depts import ALL_DEPTS
 import pickle
 import pprint
+import json
 
 CLASSINFO_URL: str = "http://classinfo.umn.edu/?subject={department}&json=1"
 
@@ -63,7 +64,9 @@ class Course:
     # the number of credits that this class is worth
     credits: Credits
     # other courses that you have to take before you can take this course
-    prerequisites: list[Prerequisite]
+    prerequisites: list[
+        Prerequisite
+    ]  # TODO: handle the fact that prereqs can be arbitrary boolean conditions
     is_elective: bool = False
 
 
@@ -173,7 +176,14 @@ def class_json_value_to_course(class_json: dict[Any, Any]) -> Course:
     """Turn a class json object into a [Course] object, complete with [Prereqs]"""
     credits_str = class_json.get("Credits")
     if credits_str is not None:
-        re_output = re.match(r"(\d+(?:\.\d+)?(?:-\d+)?) Credits?", credits_str)
+        re_output = re.match(
+            r"("  # start of group
+            r"\d+(?:\.\d+)?"  # a number, possibly with a decimal point
+            r"(?:-\d+(?:\.\d+)?)?"  # possibly a second number
+            r")"  # end of group
+            r" Credits?",
+            credits_str,
+        )
         if re_output is None:
             print(credits_str)
             raise TypeError("could not find credits in credits str?? bizarre")
@@ -207,9 +217,32 @@ def get_all_classes_from_classinfo() -> dict[CourseNumber, Course]:
     def get_single_department(department: str) -> dict[CourseNumber, Course]:
         """Search up a single dept on class info"""
         print(f"Fetching the {department} courses")
-        response = requests.get(
+        req_content = requests.get(
             f"http://classinfo.umn.edu/?subject={department}&json=1"
-        ).json()
+        ).content
+        try:
+            decoded_content = req_content.decode("latin-1")
+            while True:
+                try:
+                    response = json.loads(decoded_content)
+                except json.JSONDecodeError as e:
+                    if decoded_content[e.pos] == "\\":
+                        # try to add another backslash in order to escape this weirdo invalid backslash
+                        print("\tadding a backslash")
+                        decoded_content = (
+                            decoded_content[: e.pos] + "\\" + decoded_content[e.pos :]
+                        )
+                    else:
+                        # raise error if we can't fix it by adding a backslash
+                        raise
+                else:
+                    # exit loop if we decoded response
+                    break
+        except:
+            with open("what_the_hell", "wb") as f:
+                f.write(req_content)
+
+            raise
 
         deduped_classes = deduplicate_class_listings(response)
         courses = [class_json_value_to_course(course) for course in deduped_classes]
