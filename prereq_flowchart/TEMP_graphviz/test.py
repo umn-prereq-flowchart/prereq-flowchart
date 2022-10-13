@@ -10,11 +10,24 @@ IMAGEDIR = join(
 
 
 def read_data(filename: str) -> List[Dict[str, Union[str, List[str]]]]:
+    """Opens a json file and loads the data into a dictionary
+
+    :param filename: a string refering to a filename
+    :type filename: str
+    :return: A list of dictionaries bound by string keys with values that can be either string lists or string literals.
+    :rtype: List[Dict[str, Union[str, List[str]]]]
+    """
     with open(filename, "r") as f:
         return cast(List[Dict[str, Union[str, List[str]]]], json.load(f))
 
 
 def simple_graph() -> graphviz.Digraph:
+    """Generates a default simple graph for testing if graphviz software is properly configured.
+    The graph is not complex and should consist of 10 nodes all bound to one node with the text 0.
+
+    :return: A graph object that must be rendered to create a pdf.
+    :rtype: graphviz.Digraph
+    """
     retGraph = graphviz.Digraph(
         "wide",
         node_attr={"color": "darkgoldenrod1", "style": "filled"},
@@ -24,6 +37,13 @@ def simple_graph() -> graphviz.Digraph:
 
 
 def data_graph(data: List[Dict[str, Union[str, List[str]]]]) -> graphviz.Digraph:
+    """Reads data and generates a file of classes given
+
+    :param data: _description_
+    :type data: List[Dict[str, Union[str, List[str]]]]
+    :return: _description_
+    :rtype: graphviz.Digraph
+    """
     retGraph = graphviz.Digraph(
         "wide",
         node_attr={
