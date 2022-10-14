@@ -78,10 +78,16 @@ def deduplicate_class_listings(
     last_seen_course_term: dict[CourseNumber, Term] = {}
     # key is catalog number
     for key, course in class_listings.items():
-        course_num = CourseNumber(
-            department=course["Subject"], number=course["Catalog Number"]
-        )
-        course_term = Term.from_str(course["Term"])
+        try:
+            course_num = CourseNumber(
+                department=course["Subject"], number=course["Catalog Number"]
+            )
+            course_term = Term.from_str(course["Term"])
+        except KeyError:
+            # If a course does not have a Subject, Catalog Number, or Term, is it really even a course?
+            # TODO: log
+            print("warning: course key does not have subject, term, or course number")
+            continue
 
         if (
             course_num not in last_seen_course_term
@@ -224,7 +230,7 @@ def get_all_classes_from_classinfo() -> dict[CourseNumber, Course]:
             decoded_content = req_content.decode("latin-1")
             while True:
                 try:
-                    response = json.loads(decoded_content)
+                    response = json.loads(decoded_content, strict=False)
                 except json.JSONDecodeError as e:
                     if decoded_content[e.pos] == "\\":
                         # try to add another backslash in order to escape this weirdo invalid backslash
@@ -258,8 +264,10 @@ def get_all_classes_from_classinfo() -> dict[CourseNumber, Course]:
 if __name__ == "__main__":
     print("testing getting classes from classinfo")
     out = get_all_classes_from_classinfo()
-    with open("out_classinfo.pickle", "w") as f:
+    with open("out_classinfo.pickle", "wb") as f:
         pickle.dump(out, f)
 
     with open("out_classinfo.txt", "w") as f:
         pprint.pprint(out, f)
+
+    print("test successful")
