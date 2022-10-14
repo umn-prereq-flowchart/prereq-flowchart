@@ -4,6 +4,7 @@ import json
 import re
 import time
 
+@dataclass
 class Course:
     credits: int
     title:str
@@ -11,13 +12,6 @@ class Course:
     description:str
     inOr:bool #This is to indicate that the course has options
     required:bool
-    def __init__(self,credits,title,catalogTitle,description,inOr,required):
-        self.credits=credits
-        self.title=title
-        self.catalogTitle=catalogTitle
-        self.description=description
-        self.inOr=inOr
-        self.required=required
     def getJSON(self):
         return{  "credits"      :self.credits,
                  "title"        :self.title,
@@ -26,15 +20,11 @@ class Course:
                  "inOr"         :self.inOr,
                  "required"     :self.required}
 
-
+@dataclass
 class Major:
     courses:[]
     minCredits:int
     name:str
-    def __init__(self,courses,minCredits,name):
-        self.courses=courses
-        self.minCredits=minCredits
-        self.name=name
     def getJSON(self):
         mappedCourses=list(map(lambda c:c.getJSON(),self.courses))
         return{"courses"   :mappedCourses,
@@ -52,57 +42,52 @@ def getMajorLinks():
     majorLinks=browser.find_element(By.ID,"appTable").find_element(By.TAG_NAME,"tbody").find_elements(By.CLASS_NAME, "bold100")
     #Links to different majors
 
-    majorJSONlinks=[]
+    retLinks=[]
     for i in range(int(numberOfMajors)):
         curMajor=majorLinks[i].find_element(By.TAG_NAME,"a").get_attribute('href')
-        majorJSONlinks.append(curMajor)
+        retLinks.append(curMajor)
 
-    file=open("majorLinks.json","w")
-    file.write(json.dumps(majorJSONlinks))
-    file.close()
     browser.close()
+    return retLinks
 
 def scrapeMajors():
     browser=webdriver.Firefox()
     browser.maximize_window()
-
-    try:
-        linkFile=open("majorLinks.json","r")
-    except IOError:
-        getMajorLinks()
-        linkFile=open("majorLinks.json","r")
-
-    majorLinks=json.loads(linkFile.read())
+    majorLinks=getMajorLinks()
     majorCatalog=[]
 
-    for i in range(len(majorLinks)):
-        browser.get(majorLinks[i])
+    for majorLink in majorLinks:
+        browser.get(majorLink)
         majorName=browser.find_element(By.CLASS_NAME,"programtitle").get_attribute("textContent")
 
         minCredText=(browser.find_element(By.CLASS_NAME,"catalogList").find_elements(By.TAG_NAME,"li"))[2].get_attribute("textContent")
-        minCred=re.search("[0-9]+",minCredText).group(0)
+        minCred=re.search("\d+",minCredText).group(0)
 
         classes=browser.find_elements(By.XPATH,"//a[@onclick]/..")
         courses=[]
-        for j in range(len(classes)):
-            attr=str(classes[j].find_element(By.TAG_NAME,"a").get_attribute("onclick"))
+        for class in classes:
+            attr=str(class.find_element(By.TAG_NAME,"a").get_attribute("onclick"))
             classID=re.search("courseInfo_[0-9]*",attr)[0]
-            courseInfo=' '.join(classes[j].get_attribute("textContent").split())
+            courseInfo=' '.join(class.get_attribute("textContent").split())
 
             courseDesc=browser.find_element(By.ID,classID).find_element(By.CLASS_NAME,"textField").get_attribute("textContent")
-            credits=re.search("[0-9]+\.[0-9]+",courseInfo).group(0)
-            catalogTitle=re.search("\w+ [0-9]+W*H*",courseInfo).group(0)
-            title=re.search("\w+ [0-9]+W*H* - (.*) \(.*",courseInfo).group(0)
-            inOr=re.search("or ",courseInfo) !=None
-            required=re.search("· ",courseInfo) !=None
+            credits=re.search("\d+\.\d+-*\d*\.*\d*",courseInfo).group(0)
+            catalogTitle=re.search("\w+ \d+W*H*",courseInfo).group(0)
+            #Small form catalog name - EE 2301. Sometimes has W, H, or V at end.
+            title=re.search("\w+ \d+W*H* - (.*) \(.*",courseInfo).group(0)
+            #Full descriptive title - Introduction to Microcontrollers
+            inOr=re.search("or ",courseInfo) ==None
+            #Has or at the start - can this class replace another
+            required=re.search("· ",courseInfo) ==None
+            #The bullet point represents electives. If regex finds none, it is required.
 
             courses.append(Course(credits,title,catalogTitle,courseDesc,inOr,required))
         majorCatalog.append(Major(courses,minCred,majorName))
 
-    majorCatalogFile=open("majorCatalog.json","w")
     mappedCatalog=list(map(lambda m:m.getJSON(),majorCatalog))
-    json.dump(mappedCatalog,majorCatalogFile,indent=6)
-    majorCatalogFile.close()
+
+    with majorCatalogFile=open("majorCatalog.json","w") as majorCatalogFile:
+        json.dump(mappedCatalog,majorCatalogFile)
     browser.close()
 
 if __name__=="__main__":
