@@ -60,9 +60,9 @@ def data_graph(data: List[Dict[str, Union[str, List[str]]]]) -> graphviz.Digraph
 
 
 if __name__ == "__main__":
-    print("Test Successful")
     if not exists(IMAGEDIR):
         mkdir(IMAGEDIR)
     data_graph(read_data(join(dirname(__file__), "dummy_data.json"))).render(
         join(IMAGEDIR, "Graph1")
     )
+    print("Test Successful")
