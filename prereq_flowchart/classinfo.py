@@ -1,6 +1,6 @@
 import requests
 from dataclasses import dataclass
-from typing import Any, TypeAlias, Tuple
+from typing import Any, TypeAlias, Tuple, Optional
 import re
 from enum import IntEnum
 from prereq_flowchart.depts import ALL_DEPTS
@@ -54,7 +54,13 @@ class Prerequisite:
     concurrent_allowed: bool = False
 
 
-Credits: TypeAlias = None | float | Tuple[float, float]
+Credits: TypeAlias = Optional[Tuple[float, float]]
+"""Credits is represented as a [lower, upper] bound 
+
+The range is inclusive. The rationale is that some classes 
+(such as directed study or directed research classes can count
+for a variable number of credits)
+"""
 
 
 @dataclass
@@ -199,7 +205,7 @@ def class_json_value_to_course(class_json: dict[Any, Any]) -> Course:
             lower_bound, upper_bound = match.split("-")
             credits: Credits = (float(lower_bound), float(upper_bound))
         else:
-            credits = float(match)
+            credits = (float(match), float(match))
     else:
         credits = None
 
