@@ -1,0 +1,112 @@
+[
+    {
+        "Classname": "MATH 5651",
+        "Pre-Reqs": [
+            "MATH 2374",
+            "MATH 2373"
+        ],
+        "Reccomended": [
+            "MATH 3283W"
+        ]
+    },
+    {
+        "Classname": "MATH 2374",
+        "Pre-Reqs": [
+            [
+                "MATH 1272",
+                "MATH 1282",
+                "MATH 1372",
+                "MATH 1572H"
+            ]
+        ],
+        "Reccomended": []
+    },
+    {
+        "Classname": "MATH 2373",
+        "Pre-Reqs": [
+            [
+                "MATH 1272",
+                "MATH 1282",
+                "MATH 1372",
+                "MATH 1572H"
+            ]
+        ],
+        "Reccomended": []
+    },
+    {
+        "Classname": "MATH 3283W",
+        "Pre-Reqs": [
+            [
+                "MATH 2243",
+                "MATH 2263",
+                "MATH 2373",
+                "MATH 2374"
+            ]
+        ],
+        "Reccomended": []
+    },
+    {
+        "Classname": "MATH 1272",
+        "Pre-Reqs": [
+            "MATH 1271"
+        ],
+        "Reccomended": []
+    },
+    {
+        "Classname": "MATH 1282",
+        "Pre-Reqs": [],
+        "Reccomended": []
+    },
+    {
+        "Classname": "MATH 1372",
+        "Pre-Reqs": [
+            "MATH 1371"
+        ],
+        "Reccomended": []
+    },
+    {
+        "Classname": "MATH 1572H",
+        "Pre-Reqs": [
+            "MATH 1571H"
+        ],
+        "Reccomended": []
+    },
+    {
+        "Classname": "MATH 1271",
+        "Pre-Reqs": [],
+        "Reccomended": []
+    },
+    {
+        "Classname": "MATH 1371",
+        "Pre-Reqs": [],
+        "Reccomended": []
+    },
+    {
+        "Classname": "MATH 1571H",
+        "Pre-Reqs": [],
+        "Reccomended": []
+    },
+    {
+        "Classname": "MATH 2243",
+        "Pre-Reqs": [
+            [
+                "MATH 1272",
+                "MATH 1282",
+                "MATH 1372",
+                "MATH 1572H"
+            ]
+        ],
+        "Reccomended": []
+    },
+    {
+        "Classname": "MATH 2263",
+        "Pre-Reqs": [
+            [
+                "MATH 1272",
+                "MATH 1372",
+                "MATH 1572H"
+            ]
+        ],
+        "Reccomended": []
+    }
+]
