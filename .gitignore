@@ -15,3 +15,8 @@ __pycache__/
 build/
 out/
 
+# VS Code
+.vscode/
+
+# Cached data
+data/
