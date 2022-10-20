@@ -111,6 +111,7 @@ def get_prerequisites_string(class_json: dict[Any, Any]) -> str:
     """Get a prerequisite string out of a classinfo course desc"""
 
     def find_rough_string(class_json: dict[Any, Any]) -> str:
+        """Find roughly where the prerequisite text is in a course description"""
         if "Prerequisites" in class_json:
             return str(class_json["Prerequisites"])
         elif "Course Catalog Description" in class_json:
@@ -132,9 +133,11 @@ def get_prerequisites_string(class_json: dict[Any, Any]) -> str:
         return ""
 
     def expand_prereq_string_abbreviations(prereq_string: str) -> str:
+        """Standardise the format of prerequisite strings by making some
+        common substitutions, such as expanding abbreviations"""
         prereq_string = prereq_string.lower()
 
-        prereq_string = prereq_string.replace("dept", "department")
+        prereq_string = prereq_string.replace("dept ", "department ")
         prereq_string = prereq_string.replace("instr ", "instructor ")
 
         # its meaningless that you can get perms from special ppl
