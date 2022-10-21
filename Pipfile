@@ -7,6 +7,7 @@ name = "pypi"
 requests = "*"
 pydantic = "*"
 graphviz = "*"
+selenium = "*"
 
 [dev-packages]
 black = "*"
