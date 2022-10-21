@@ -4,11 +4,15 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+requests = "*"
+pydantic = "*"
 graphviz = "*"
+selenium = "*"
 
 [dev-packages]
 black = "*"
 mypy = "*"
+types-requests = "*"
 
 [requires]
 python_version = "3.10"
