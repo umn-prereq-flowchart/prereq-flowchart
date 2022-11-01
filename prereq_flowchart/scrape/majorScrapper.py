@@ -1,9 +1,7 @@
 from selenium import webdriver
 from dataclasses import dataclass
 from selenium.webdriver.common.by import By
-import json
 import re
-import time
 
 
 @dataclass
@@ -70,7 +68,7 @@ def getMajorLinks():
     return retLinks
 
 
-def scrapeMajors():
+def scrapeMajors() -> list[Major]:
     browser = webdriver.Firefox()
     browser.maximize_window()
     majorLinks = getMajorLinks()
@@ -114,19 +112,17 @@ def scrapeMajors():
             required = re.search("· ", courseInfo) == None
             # The bullet point represents electives. If regex finds none, it is required.
 
-            courses.append(
-                Course(credits, title, catalogTitle, courseDesc, inOr, required)
+            courses.append(  # i think this is what was meant to happen
+                Course(credits, title[0], catalogTitle, courseDesc, inOr, required)
             )
         majorCatalog.append(
             Major(courses, minCred, majorName[0].get_attribute("textContent"))
         )
 
-    mappedCatalog = [m.getJSON() for m in majorCatalog]
+    # mappedCatalog = [m.getJSON() for m in majorCatalog]
+    #
+    # with open("majorCatalog.json", "w") as majorCatalogFile:
+    #     json.dump(mappedCatalog, majorCatalogFile, indent=2)
+    # browser.close()
 
-    with open("majorCatalog.json", "w") as majorCatalogFile:
-        json.dump(mappedCatalog, majorCatalogFile, indent=2)
-    browser.close()
-
-
-if __name__ == "__main__":
-    scrapeMajors()
+    return majorCatalog
