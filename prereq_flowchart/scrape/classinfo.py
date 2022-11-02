@@ -1,13 +1,9 @@
-import os.path
-
 import requests
 from dataclasses import dataclass
 from typing import Any, TypeAlias, Tuple, Optional
 import re
 from enum import IntEnum
 from prereq_flowchart.scrape.depts import ALL_DEPTS
-import pickle
-import pprint
 import json
 
 CLASSINFO_URL: str = "http://classinfo.umn.edu/?subject={department}&json=1"

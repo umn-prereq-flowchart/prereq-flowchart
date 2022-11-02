@@ -1,11 +1,24 @@
-import json
 import os
 from pprint import pprint
-from classinfo import *  # CourseNumber, Course, get_all_classes_from_classinfo
-from majorScrapper import Major, scrapeMajors
-import majorScrapper
+from prereq_flowchart.scrape.classinfo import *
+# from classinfo import *
+from prereq_flowchart.scrape.majorScrapper import *
+# import prereq_flowchart.scrape.majorScrapper
+from prereq_flowchart.scrape import majorScrapper
 import pickle
-from os.path import join, dirname, exists, abspath
+from os.path import join, dirname, abspath
+
+'''
+functions for collecting information from the web
+
+todo: select for specific info instead of gathering everything and then sorting 
+through it
+
+ultimately it would be nice to be able to request data for specific classes and 
+construct graphs with minimum viable data, which is why i extracted this logic
+out (in order to create an adapted interface to the websites with built-in 
+caching)
+'''
 
 # [project]/prereq_flowchart/scrape/../../data
 DATA_FOLDER = join(dirname(abspath(__file__)), "../../data")
@@ -40,7 +53,7 @@ def scrape_majors() -> list[Major]:
 
     if os.path.exists(json_path):
         if os.path.exists(path) and not FORCE_RECHECK_MAJORINFO:
-            print("reading cached classinfo")
+            print("reading cached major catalogs")
             with open(path, "rb") as f:
                 cache = pickle.load(f)
                 return cache
@@ -58,6 +71,10 @@ def scrape_majors() -> list[Major]:
     return m
 
 
+# note: even though this will read/write cache files in the data folder, they
+# will not be valid in usage outside of this package because the location of
+# python files has changed, meaning pickle will not be able to deserialize
+# the objects.
 if __name__ == "__main__":
     # convert cached json back into objects (maybe pickling is a good idea)
     # json_path = join(DATA_FOLDER, "majorCatalog.json")
