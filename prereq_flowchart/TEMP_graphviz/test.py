@@ -46,6 +46,9 @@ def data_graph(data: List[Dict[str, Union[str, List[str]]]]) -> graphviz.Digraph
     """
     retGraph = graphviz.Digraph(
         "wide",
+        edge_attr={
+            "minlen": "2"
+        },
         node_attr={
             "color": "darkgoldenrod1",
             "style": "filled",
@@ -53,6 +56,9 @@ def data_graph(data: List[Dict[str, Union[str, List[str]]]]) -> graphviz.Digraph
             "fontname": "Century Gothic Bold",
         },
     )
+    graphviz.Digraph(graph_attr={
+
+    })
     for node in data:
         for prereq in node["Prereqs"]:
             retGraph.edge(prereq, node["Classname"])
@@ -62,7 +68,19 @@ def data_graph(data: List[Dict[str, Union[str, List[str]]]]) -> graphviz.Digraph
 if __name__ == "__main__":
     if not exists(IMAGEDIR):
         mkdir(IMAGEDIR)
-    data_graph(read_data(join(dirname(__file__), "dummy_data.json"))).render(
+    # data_graph(read_data(join(dirname(__file__), "dummy_data.json"))).render(
+    #     join(IMAGEDIR, "Graph1")
+    # )
+    # Computer Engineering
+    # data_graph(read_data(join("../../data", "559019f3f12ee4bba849000957463907.json"))).render(
+    # Computer Science B.S.
+    # data_graph(read_data(join("../../data", "4e6dca0766445d116f5b335dcfcad3d4.json"))).render(
+    # Bioproducts and Biosystems Engineering B.B.B.E.
+    # data_graph(read_data(join("../../data", "b144101435b2f469ede95b2eeaaaee4e.json"))).render(
+    # i don't remember what this is
+    # data_graph(read_data(join("../../data", "0ea003d4de269d88921afcf0f2cb91b8.json"))).render(
+    # Mechanical Engineering B.M.E.
+    data_graph(read_data(join("../../data", "2fb2d5c073ef8c356a5ae97384b24f17.json"))).render(
         join(IMAGEDIR, "Graph1")
     )
     print("Test Successful")
