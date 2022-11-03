@@ -17,9 +17,10 @@ this is the memoization test
 
 def make_json_data_for_majors():
     c = scrape_classinfo()
-    c_names = [course.department+" "+course.number for course in c.keys()]
     m = scrape_majors()
-    # print(c.keys())
+    # associate hashed file name with major title
+    major_table = {}
+
     for major in m:
         print(f"generating: {major.name}")
         courses = {}
@@ -55,11 +56,14 @@ def make_json_data_for_majors():
                 "Prereqs": prereqs
             })
 
-        # pprint.pprint(graph_data)
         filename = md5(major.name.encode()).hexdigest()+".json"
+        major_table[major.name] = filename
         print(f"stored at: {filename}")
         with open(join(scrape.scrape.DATA_FOLDER, filename), "w") as f:
             json.dump(graph_data, f)
+
+    with open(join(scrape.scrape.DATA_FOLDER, "lookup.json"), "w") as f:
+        json.dump(major_table, f)
 
 
 if __name__ == "__main__":
