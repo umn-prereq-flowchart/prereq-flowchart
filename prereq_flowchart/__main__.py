@@ -12,9 +12,15 @@ instructions: don't die
 
 """
 
-parser = argparse.ArgumentParser(description='Generates graphs based on the prerequisites of classes in a major.')
-parser.add_argument("search", metavar='query', type=str,
-                    help="Search for classes that roughly match the query string")
+parser = argparse.ArgumentParser(
+    description="Generates graphs based on the prerequisites of classes in a major."
+)
+parser.add_argument(
+    "search",
+    metavar="query",
+    type=str,
+    help="Search for classes that roughly match the query string",
+)
 
 args = vars(parser.parse_args())
 
@@ -24,6 +30,7 @@ if not exists(join(DATA_FOLDER, "lookup.json")):
     if r == "n":
         sys.exit(0)
     from prereq_flowchart import compose
+
     json = compose.make_json_data_for_majors()
 
 query = args["search"]
@@ -50,6 +57,6 @@ while True:
         print("invalid integer format")
         continue
 # get hash from list
-(r, h, _) = results[c-1]
+(r, h, _) = results[c - 1]
 data_graph(read_data(join(DATA_FOLDER, h))).render(join(IMAGEDIR, "Graph1"))
 print("complete!")

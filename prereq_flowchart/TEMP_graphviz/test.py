@@ -46,9 +46,7 @@ def data_graph(data: List[Dict[str, Union[str, List[str]]]]) -> graphviz.Digraph
     """
     retGraph = graphviz.Digraph(
         "wide",
-        edge_attr={
-            "minlen": "2"
-        },
+        edge_attr={"minlen": "2"},
         node_attr={
             "color": "darkgoldenrod1",
             "style": "filled",

@@ -7,7 +7,7 @@ import pickle
 from prereq_flowchart.scrape import classinfo
 from prereq_flowchart.scrape import majorScrapper
 
-'''
+"""
 functions for collecting information from the web
 
 todo: select for specific info instead of gathering everything and then sorting 
@@ -17,7 +17,7 @@ ultimately it would be nice to be able to request data for specific classes and
 construct graphs with minimum viable data, which is why i extracted this logic
 out (in order to create an adapted interface to the websites with built-in 
 caching)
-'''
+"""
 
 # prereq_flowchart/prereq_flowchart/scrape/../../data
 DATA_FOLDER = path.join(path.dirname(path.abspath(__file__)), "../../data")
