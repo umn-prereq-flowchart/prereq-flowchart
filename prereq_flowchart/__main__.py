@@ -50,7 +50,5 @@ while True:
         continue
 # get hash from list
 (r, h, _) = results[c-1]
-from TEMP_graphviz.test import *
 data_graph(read_data(join("../data", h))).render(join(IMAGEDIR, "Graph1"))
 print("complete!")
-
