@@ -1,3 +1,3 @@
 #!/bin/sh
 
-python3 prereq_flowchart/__main__.py "$@"
+python3 -m prereq_flowchart "$@"
