@@ -72,36 +72,8 @@ def scrape_majors() -> list[majorScrapper.Major]:
     return m
 
 
-# note: even though this will read/write cache files in the data folder, they
-# will not be valid in usage outside of this package because the location of
-# python files has changed, meaning pickle will not be able to deserialize
-# the objects.
 if __name__ == "__main__":
-    # convert cached json back into objects (maybe pickling is a good idea)
-    # json_path = join(DATA_FOLDER, "majorCatalog.json")
-    # with open(json_path, "r") as f:
-    #     major_data = json.load(f)
-    #
-    # majors = []
-    # for major in major_data:
-    #     courses = [majorScrapper.Course(credits=course["credits"],
-    #                                     title=course["title"],
-    #                                     catalogTitle=course["catalogTitle"],
-    #                                     description=course["description"],
-    #                                     inOr=course["inOr"],
-    #                                     required=course["required"])
-    #                for course in major["courses"]]
-    #     m = Major(courses=courses, minCredits=major["minCredits"], name=major["name"])
-    #     majors.append(m)
-    #
-    # path = join(DATA_FOLDER, "majorCatalog.pickle")
-    # print(majors[0].name)
-    # with open(path, "wb") as f:
-    #     pickle.dump(majors, f)
-
     print("testing getting everything")
-
     courses = scrape_classinfo()
     majors = scrape_majors()
-
     print("retrieval complete")
