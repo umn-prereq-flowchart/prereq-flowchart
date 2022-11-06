@@ -19,7 +19,7 @@ if not os.path.exists("../data/lookup.json"):
     r = input("Gathering data; this will take a while...continue? [Y/n]")
     if r == "n":
         sys.exit(0)
-    from scrape import scrape
+    from prereq_flowchart.scrape import scrape
     scrape.scrape_classinfo()
     scrape.scrape_majors()
 
