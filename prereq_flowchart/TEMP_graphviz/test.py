@@ -56,9 +56,6 @@ def data_graph(data: List[Dict[str, Union[str, List[str]]]]) -> graphviz.Digraph
             "fontname": "Century Gothic Bold",
         },
     )
-    graphviz.Digraph(graph_attr={
-
-    })
     for node in data:
         for prereq in node["Prereqs"]:
             retGraph.edge(prereq, node["Classname"])
@@ -68,9 +65,7 @@ def data_graph(data: List[Dict[str, Union[str, List[str]]]]) -> graphviz.Digraph
 if __name__ == "__main__":
     if not exists(IMAGEDIR):
         mkdir(IMAGEDIR)
-    # data_graph(read_data(join(dirname(__file__), "dummy_data.json"))).render(
-    # Computer Science B.S.
-    data_graph(read_data(join("../../data", "4e6dca0766445d116f5b335dcfcad3d4.json"))).render(
+    data_graph(read_data(join(dirname(__file__), "dummy_data.json"))).render(
         join(IMAGEDIR, "Graph1")
     )
     print("Test Successful")

@@ -1,8 +1,10 @@
 import argparse
-import os
 import sys
 
-from prereq_flowchart.TEMP_graphviz.test import *
+from os.path import exists, join
+
+from prereq_flowchart.TEMP_graphviz.test import IMAGEDIR, read_data, data_graph
+from prereq_flowchart.scrape.scrape import DATA_FOLDER
 
 """prereq-flowchart: create graphs representing the prerequisite hierarchy of a set of classes
 
@@ -16,14 +18,13 @@ parser.add_argument("search", metavar='query', type=str,
 
 args = vars(parser.parse_args())
 
-if not os.path.exists("../data/lookup.json"):
+if not exists(join(DATA_FOLDER, "lookup.json")):
     # the main reason why being able to grab exactly what is needed would be cool
     r = input("Gathering data; this will take a while...continue? [Y/n]")
     if r == "n":
         sys.exit(0)
-    from prereq_flowchart.scrape import scrape
-    scrape.scrape_classinfo()
-    scrape.scrape_majors()
+    from prereq_flowchart import compose
+    json = compose.make_json_data_for_majors()
 
 query = args["search"]
 
@@ -50,5 +51,5 @@ while True:
         continue
 # get hash from list
 (r, h, _) = results[c-1]
-data_graph(read_data(join("../data", h))).render(join(IMAGEDIR, "Graph1"))
+data_graph(read_data(join(DATA_FOLDER, h))).render(join(IMAGEDIR, "Graph1"))
 print("complete!")

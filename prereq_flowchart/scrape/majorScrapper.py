@@ -75,6 +75,7 @@ def scrapeMajors() -> list[Major]:
     majorCatalog = []
 
     for majorLink in majorLinks:
+        print("retrieving from", majorLink)
         browser.get(majorLink)
         majorName = browser.find_elements(By.CLASS_NAME, "programtitle")
         # The above line asks for all class names so we can skip old programs

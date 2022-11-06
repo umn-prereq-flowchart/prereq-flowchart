@@ -1,3 +1,4 @@
+import os
 from os import path
 import json
 from pprint import pprint
@@ -20,6 +21,8 @@ caching)
 
 # prereq_flowchart/prereq_flowchart/scrape/../../data
 DATA_FOLDER = path.join(path.dirname(path.abspath(__file__)), "../../data")
+if not path.exists(DATA_FOLDER):
+    os.makedirs(DATA_FOLDER)
 FORCE_RECHECK_CLASSINFO = False
 FORCE_RECHECK_MAJORINFO = False
 

@@ -10,15 +10,19 @@ import json
 from thefuzz import process
 
 from prereq_flowchart.scrape.scrape import DATA_FOLDER
+from prereq_flowchart import compose
 
-with open(path.join(DATA_FOLDER, "lookup.json"), "r") as f:
-    major_table = json.load(f)
-    major_names = major_table.keys()
+
+lookup_file = path.join(DATA_FOLDER, "lookup.json")
+if path.exists(lookup_file):
+    with open(path.join(DATA_FOLDER, "lookup.json"), "r") as f:
+        major_table = json.load(f)
+else:
+    major_table = compose.make_json_data_for_majors()
+major_names = major_table.keys()
 
 
 def search_major_names(query: str):
     r = process.extract(query, major_names, limit=10)
     fns = [(name, major_table[name], c) for (name, c) in r]
     return fns
-
-    # how do i make these selectable, where do i cache these results between calls
