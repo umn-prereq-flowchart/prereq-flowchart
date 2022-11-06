@@ -25,7 +25,7 @@ if not os.path.exists("../data/lookup.json"):
 
 query = args["search"]
 
-from search import search_major_names
+from prereq_flowchart.search import search_major_names
 
 results = search_major_names(query=query)
 print("results:")
