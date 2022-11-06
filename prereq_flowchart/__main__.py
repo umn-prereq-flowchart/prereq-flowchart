@@ -40,10 +40,8 @@ from prereq_flowchart.search import search_major_names
 results = search_major_names(query=query)
 print("results:")
 # are we programming enough to not index from 1
-i = 1
-for (r, h, _) in results:
+for i, (r, h, _) in enumerate(results, start=1):
     print(f"{i}.\t{r}")  # ({c})")
-    i += 1
 c = ""
 # ask user to choose from list provided by search
 while True:
