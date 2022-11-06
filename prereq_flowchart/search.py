@@ -9,7 +9,7 @@ import json
 
 from thefuzz import process
 
-from scrape.scrape import DATA_FOLDER
+from prereq_flowchart.scrape.scrape import DATA_FOLDER
 
 with open(path.join(DATA_FOLDER, "lookup.json"), "r") as f:
     major_table = json.load(f)

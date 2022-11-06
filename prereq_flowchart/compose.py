@@ -1,10 +1,8 @@
 from os.path import join
-import pprint
 from hashlib import md5
-import scrape.scrape
 
-from scrape.classinfo import *
-from scrape.scrape import scrape_classinfo, scrape_majors
+from prereq_flowchart.scrape.classinfo import *
+from prereq_flowchart.scrape import scrape
 
 '''
 recursively searches for prerequisites to a class, then flattens it into a list
@@ -16,8 +14,8 @@ this is the memoization test
 
 
 def make_json_data_for_majors():
-    c = scrape_classinfo()
-    m = scrape_majors()
+    c = scrape.scrape_classinfo()
+    m = scrape.scrape_majors()
     # associate hashed file name with major title
     major_table = {}
 
@@ -59,10 +57,10 @@ def make_json_data_for_majors():
         filename = md5(major.name.encode()).hexdigest()+".json"
         major_table[major.name] = filename
         print(f"stored at: {filename}")
-        with open(join(scrape.scrape.DATA_FOLDER, filename), "w") as f:
+        with open(join(scrape.DATA_FOLDER, filename), "w") as f:
             json.dump(graph_data, f)
 
-    with open(join(scrape.scrape.DATA_FOLDER, "lookup.json"), "w") as f:
+    with open(join(scrape.DATA_FOLDER, "lookup.json"), "w") as f:
         json.dump(major_table, f)
 
 

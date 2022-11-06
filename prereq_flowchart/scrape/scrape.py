@@ -1,12 +1,10 @@
-import os
+from os import path
+import json
 from pprint import pprint
-from prereq_flowchart.scrape.classinfo import *
-# from classinfo import *
-from prereq_flowchart.scrape.majorScrapper import *
-# import prereq_flowchart.scrape.majorScrapper
-from prereq_flowchart.scrape import majorScrapper
 import pickle
-from os.path import join, dirname, abspath
+
+from prereq_flowchart.scrape import classinfo
+from prereq_flowchart.scrape import majorScrapper
 
 '''
 functions for collecting information from the web
@@ -20,25 +18,25 @@ out (in order to create an adapted interface to the websites with built-in
 caching)
 '''
 
-# [project]/prereq_flowchart/scrape/../../data
-DATA_FOLDER = join(dirname(abspath(__file__)), "../../data")
+# prereq_flowchart/prereq_flowchart/scrape/../../data
+DATA_FOLDER = path.join(path.dirname(path.abspath(__file__)), "../../data")
 FORCE_RECHECK_CLASSINFO = False
 FORCE_RECHECK_MAJORINFO = False
 
 
-def scrape_classinfo() -> dict[CourseNumber, Course]:
-    path = join(DATA_FOLDER, "out_classinfo.pickle")
-    log_path = join(DATA_FOLDER, "out_classinfo.txt")
+def scrape_classinfo() -> dict[classinfo.CourseNumber, classinfo.Course]:
+    pickle_path = path.join(DATA_FOLDER, "out_classinfo.pickle")
+    log_path = path.join(DATA_FOLDER, "out_classinfo.txt")
 
-    if os.path.exists(path) and not FORCE_RECHECK_CLASSINFO:
+    if path.exists(pickle_path) and not FORCE_RECHECK_CLASSINFO:
         print("reading cached classinfo")
-        with open(path, "rb") as f:
+        with open(pickle_path, "rb") as f:
             p = pickle.load(f)
             return p
 
     print("getting classes from classinfo")
-    out = get_all_classes_from_classinfo()
-    with open(path, "wb") as f:
+    out = classinfo.get_all_classes_from_classinfo()
+    with open(pickle_path, "wb") as f:
         pickle.dump(out, f)
     with open(log_path, "w") as f:
         pprint(out, f)
@@ -47,20 +45,20 @@ def scrape_classinfo() -> dict[CourseNumber, Course]:
     return out
 
 
-def scrape_majors() -> list[Major]:
-    path = join(DATA_FOLDER, "majorCatalog.pickle")
-    json_path = join(DATA_FOLDER, "majorCatalog.json")
+def scrape_majors() -> list[majorScrapper.Major]:
+    pickle_path = path.join(DATA_FOLDER, "majorCatalog.pickle")
+    json_path = path.join(DATA_FOLDER, "majorCatalog.json")
 
-    if os.path.exists(json_path):
-        if os.path.exists(path) and not FORCE_RECHECK_MAJORINFO:
+    if path.exists(json_path):
+        if path.exists(pickle_path) and not FORCE_RECHECK_MAJORINFO:
             print("reading cached major catalogs")
-            with open(path, "rb") as f:
+            with open(pickle_path, "rb") as f:
                 cache = pickle.load(f)
                 return cache
 
     print("getting majors from university catalogs")
-    m = scrapeMajors()
-    with open(path, "wb") as f:
+    m = majorScrapper.scrapeMajors()
+    with open(pickle_path, "wb") as f:
         pickle.dump(m, f)
 
     # this is still easier to look at for debugging purposes
@@ -104,4 +102,3 @@ if __name__ == "__main__":
     majors = scrape_majors()
 
     print("retrieval complete")
-

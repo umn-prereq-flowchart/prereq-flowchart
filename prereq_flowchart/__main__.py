@@ -2,6 +2,8 @@ import argparse
 import os
 import sys
 
+from prereq_flowchart.TEMP_graphviz.test import *
+
 """prereq-flowchart: create graphs representing the prerequisite hierarchy of a set of classes
 
 instructions: don't die
