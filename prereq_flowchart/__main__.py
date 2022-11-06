@@ -3,7 +3,7 @@ import sys
 
 from os.path import exists, join
 
-from prereq_flowchart.TEMP_graphviz.test import IMAGEDIR, read_data, data_graph
+from prereq_flowchart.graph.graph import IMAGEDIR, read_data, data_graph
 from prereq_flowchart.scrape.scrape import DATA_FOLDER
 
 """prereq-flowchart: create graphs representing the prerequisite hierarchy of a set of classes
