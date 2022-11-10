@@ -33,7 +33,7 @@ class Term:
             case "Fall":
                 term = Semester.FALL
             case _:
-                raise ValueError(f"Unknown term: {term!r}")
+                raise ValueError(f"Unknown term: {term_str!r}")
 
         return cls(year=year, semester=term)
 
