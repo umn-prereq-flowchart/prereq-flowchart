@@ -38,12 +38,15 @@ class Term:
         return cls(year=year, semester=term)
 
 
-@dataclass(frozen=True)
+@dataclass(eq=True, frozen=True)
 class CourseNumber:
     # e.g the CSCI, EE, CEGE part of a course number
     department: str
     # the 1001, 1301W, 1402H part of a course number
     number: str
+
+    def to_str(self) -> str:
+        return self.department + " " + self.number
 
 
 @dataclass

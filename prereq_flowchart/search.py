@@ -22,7 +22,7 @@ else:
 major_names = major_table.keys()
 
 
-def search_major_names(query: str):
-    r = process.extract(query, major_names, limit=10)
+def search_major_names(query: str, num_results=10):
+    r = process.extract(query, major_names, limit=num_results)
     fns = [(name, major_table[name], c) for (name, c) in r]
     return fns

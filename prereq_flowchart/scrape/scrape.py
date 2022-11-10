@@ -23,15 +23,15 @@ caching)
 DATA_FOLDER = path.join(path.dirname(path.abspath(__file__)), "../../data")
 if not path.exists(DATA_FOLDER):
     os.makedirs(DATA_FOLDER)
-FORCE_RECHECK_CLASSINFO = False
-FORCE_RECHECK_MAJORINFO = False
 
 
-def scrape_classinfo() -> dict[classinfo.CourseNumber, classinfo.Course]:
+def scrape_classinfo(
+    force_recheck=False,
+) -> dict[classinfo.CourseNumber, classinfo.Course]:
     pickle_path = path.join(DATA_FOLDER, "out_classinfo.pickle")
     log_path = path.join(DATA_FOLDER, "out_classinfo.txt")
 
-    if path.exists(pickle_path) and not FORCE_RECHECK_CLASSINFO:
+    if path.exists(pickle_path) and not force_recheck:
         print("reading cached classinfo")
         with open(pickle_path, "rb") as f:
             p = pickle.load(f)
@@ -48,16 +48,15 @@ def scrape_classinfo() -> dict[classinfo.CourseNumber, classinfo.Course]:
     return out
 
 
-def scrape_majors() -> list[majorScrapper.Major]:
+def scrape_majors(force_recheck=False) -> list[majorScrapper.Major]:
     pickle_path = path.join(DATA_FOLDER, "majorCatalog.pickle")
     json_path = path.join(DATA_FOLDER, "majorCatalog.json")
 
-    if path.exists(json_path):
-        if path.exists(pickle_path) and not FORCE_RECHECK_MAJORINFO:
-            print("reading cached major catalogs")
-            with open(pickle_path, "rb") as f:
-                cache = pickle.load(f)
-                return cache
+    if path.exists(pickle_path) and not force_recheck:
+        print("reading cached major catalogs")
+        with open(pickle_path, "rb") as f:
+            cache = pickle.load(f)
+            return cache
 
     print("getting majors from university catalogs")
     m = majorScrapper.scrapeMajors()

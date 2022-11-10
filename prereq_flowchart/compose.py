@@ -20,42 +20,40 @@ def make_json_data_for_majors():
     major_table = {}
 
     for major in m:
-        print(f"generating: {major.name}")
-        courses = {}
+        courses = []
+        format_warnings = ""
+        not_found_warnings = ""
         for course in major.courses:
-            num = course.catalogTitle
+            num = course.catalogTitle.split(" ")
+            if len(num) != 2:
+                not_found_warnings += f"\tinvalid course: {course.catalogTitle}\n"
+                continue
+            num = CourseNumber(num[0], num[1])
+            if num not in c:
+                not_found_warnings += f"\tcourse not found: {course.catalogTitle}\n"
+                continue
+            if c[num] not in courses:
+                courses.append(c[num])
+        if format_warnings != "" or not_found_warnings != "":
+            print(f"{major.name}\n", format_warnings, not_found_warnings, end="")
 
-            # i don't know how to do this better, it's painfully slow
-            # creating a CourseNumber and checking for equality does not work
-            for c_number in c.keys():
-                # duplicate paring (i think due to multiple semesters)
-                c_num = c_number.department + " " + c_number.number
-                if num == c_num:
-                    courses[c_num] = c[c_number]
-                    break
-                    # courses.append(c[c_number])
-
-        # discard string name (maybe don't do this?)
-        courses = courses.values()
         graph_data = []
         # todo: recursively search for prerequisites to prerequisites
         for course in courses:
-            number = (
-                course.catalog_number.department + " " + course.catalog_number.number
-            )
+            # number = (
+            #     course.catalog_number.department + " " + course.catalog_number.number
+            # )
+            number = course.catalog_number.to_str()
             prereqs = []
             for p in course.prerequisites:
-                name = p.catalog_number.department + " " + p.catalog_number.number
-                # this algorithm seems to create a lot of duplicate prerequisites
-                # cleaner data would help but i think this is safe to apply either way
+                # name = p.catalog_number.department + " " + p.catalog_number.number
+                name = p.catalog_number.to_str()
                 if name not in prereqs:
                     prereqs.append(name)
-
             graph_data.append({"Classname": number, "Prereqs": prereqs})
 
         filename = md5(major.name.encode()).hexdigest() + ".json"
         major_table[major.name] = filename
-        print(f"stored at: {filename}")
         with open(join(scrape.DATA_FOLDER, filename), "w") as f:
             json.dump(graph_data, f)
 
