@@ -8,6 +8,7 @@ requests = "*"
 pydantic = "*"
 graphviz = "*"
 selenium = "*"
+thefuzz = "*"
 
 [dev-packages]
 black = "*"

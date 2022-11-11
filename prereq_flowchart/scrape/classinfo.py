@@ -3,9 +3,7 @@ from dataclasses import dataclass
 from typing import Any, TypeAlias, Tuple, Optional
 import re
 from enum import IntEnum
-from prereq_flowchart.depts import ALL_DEPTS
-import pickle
-import pprint
+from prereq_flowchart.scrape.depts import ALL_DEPTS
 import json
 
 CLASSINFO_URL: str = "http://classinfo.umn.edu/?subject={department}&json=1"
@@ -35,17 +33,20 @@ class Term:
             case "Fall":
                 term = Semester.FALL
             case _:
-                raise ValueError(f"Unknown term: {term!r}")
+                raise ValueError(f"Unknown term: {term_str!r}")
 
         return cls(year=year, semester=term)
 
 
-@dataclass(frozen=True)
+@dataclass(eq=True, frozen=True)
 class CourseNumber:
     # e.g the CSCI, EE, CEGE part of a course number
     department: str
     # the 1001, 1301W, 1402H part of a course number
     number: str
+
+    def to_str(self) -> str:
+        return self.department + " " + self.number
 
 
 @dataclass
@@ -268,15 +269,3 @@ def get_all_classes_from_classinfo() -> dict[CourseNumber, Course]:
         ret |= get_single_department(dept)
 
     return ret
-
-
-if __name__ == "__main__":
-    print("testing getting classes from classinfo")
-    out = get_all_classes_from_classinfo()
-    with open("out_classinfo.pickle", "wb") as f:
-        pickle.dump(out, f)
-
-    with open("out_classinfo.txt", "w") as f:
-        pprint.pprint(out, f)
-
-    print("test successful")

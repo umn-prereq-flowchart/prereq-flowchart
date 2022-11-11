@@ -5,6 +5,9 @@ Thumbs.db
 # Generated files from GraphViz
 out/*
 
+# Generated files from web scrapers
+data/
+
 # Python compilation artifacts
 *.pyc
 __pycache__/
