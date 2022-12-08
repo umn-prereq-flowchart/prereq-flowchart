@@ -4,13 +4,51 @@ from hashlib import md5
 from prereq_flowchart.scrape.classinfo import *
 from prereq_flowchart.scrape import scrape
 
-"""
-recursively searches for prerequisites to a class, then flattens it into a list
-of courses and their prerequisites.
+c = scrape.scrape_classinfo()
+non_existent = []
+buf = []
 
-this is the memoization test
-"""
-# def get_prerequisites():
+
+def get_courses(course: CourseNumber, n=0) -> [CourseNumber]:
+    """
+    returns a list of classes (not a hierarchy!) that are a prerequisite to the course provided.
+    Args:
+        course: 
+        n: 
+
+    Returns:
+
+    """
+    # print(course)
+    global buf
+    if n > 5:
+        # print(f"bottomed out: {course}")
+        return []
+
+    if course not in c:
+        return []
+    # this is an issue
+    # if course == CourseNumber("CHEM", "1061"):
+    #     print(f'chem prereqs: {c[course].prerequisites}')
+    prereqs = []
+    for prereq in c[course].prerequisites:
+        if prereq in buf:
+            continue
+        if prereq.catalog_number in c:
+            prereqs.append(prereq.catalog_number)
+            prereqs.extend(get_courses(course=prereq.catalog_number, n=n+1))
+        else:
+            if prereq.catalog_number not in non_existent:
+                print(f"warning: prereq does not exist: {prereq.catalog_number}")
+                non_existent.append(prereq.catalog_number)
+
+    for prereq in prereqs:
+        if prereq not in buf:
+            buf.append(prereq)
+    if n == 0:
+        # print(len(buf))
+        buf = []
+    return prereqs
 
 
 def make_json_data_for_majors():
@@ -20,22 +58,34 @@ def make_json_data_for_majors():
     major_table = {}
 
     for major in m:
+        # print(major.name)
         courses = []
-        format_warnings = ""
-        not_found_warnings = ""
+        warnings = ""
         for course in major.courses:
+            # print(course.catalogTitle)
             num = course.catalogTitle.split(" ")
             if len(num) != 2:
-                not_found_warnings += f"\tinvalid course: {course.catalogTitle}\n"
+                warnings += f"\tinvalid course: {course.catalogTitle}\n"
                 continue
             num = CourseNumber(num[0], num[1])
             if num not in c:
-                not_found_warnings += f"\tcourse not found: {course.catalogTitle}\n"
+                warnings += f"\tcourse not found: {course.catalogTitle}\n"
                 continue
             if c[num] not in courses:
                 courses.append(c[num])
-        if format_warnings != "" or not_found_warnings != "":
-            print(f"{major.name}\n", format_warnings, not_found_warnings, end="")
+                for pr in get_courses(num):
+                    if c[pr] not in courses:
+                        courses.append(c[pr])
+            # courses.extend(get_courses(c[num]))
+        if warnings != "":
+            print(f"{major.name}\n", warnings, end="")
+
+        # i = 0
+        # while i in range(0, len(courses)):
+        #     if "H" in courses[i].catalog_number.number:
+        #         courses.pop(i)
+        #     else:
+        #         i += 1
 
         graph_data = []
         # todo: recursively search for prerequisites to prerequisites
